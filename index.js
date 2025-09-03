@@ -28,7 +28,7 @@ const createWorklog = (issue, text, timeSpent) => {
     "version": 1
   },
   "started": "${started}",
-  "timeSpent": ${timeSpent}
+  "timeSpent": "${timeSpent}"
   }`;
   console.log(bodyData);
 
