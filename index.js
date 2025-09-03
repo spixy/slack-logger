@@ -10,6 +10,7 @@ const JIRA_TOKEN = env.JIRA_TOKEN;
 
 const createWorklog = (issue, text, timeSpent) => {
   const started = new Date().toISOString().replace("Z", "+0000");
+  console.log({issue, text, timeSpent});
 
   const bodyData = `{
   "comment": {
@@ -30,7 +31,6 @@ const createWorklog = (issue, text, timeSpent) => {
   "started": "${started}",
   "timeSpent": "${timeSpent}"
   }`;
-  console.log(bodyData);
 
   const basicAuth = `${JIRA_USER}:${JIRA_TOKEN}`;
   return fetch(`${JIRA_BASE}/rest/api/3/issue/${issue}/worklog`, {
@@ -52,19 +52,22 @@ app.post("/slack/log", async (req, res) => {
   const { user_id, text } = req.body;
 
   const textParts = text.split(" ");
-  const timeSpent = textParts[0];
-  const contentText = textParts[1] ?? "";  
-  const issue = textParts[2] ?? JIRA_ISSUE;
+
+  const hasIssue = textParts[0].includes("-");
+  const issue = hasIssue ? textParts[0] : JIRA_ISSUE
+
+  const timeSpent = hasIssue ? textParts[1] : textParts[1];
+  const contentText = textParts.slice(hasIssue ? 2 : 1).join(" ");
 
   if (user_id !== ALLOWED_USER) {
     return res.status(401).json({ text: "🚫 You are not allowed to use this command." });
   }
 
   const result = await createWorklog(issue, contentText, timeSpent);
+  const success = result.status === 201;
   
-  console.log(`Status: ${result.status}`);
-  console.log(await result.json());
+  console.log(`Jira status: ${result.status}`);
 
-  res.status(result.status).json();
+  return res.status(success ? 200 : result.status).json();
 });  
 app.listen(8080, () => console.log("Listening on port 8080"));
