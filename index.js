@@ -56,7 +56,7 @@ app.post("/slack/log", async (req, res) => {
   const hasIssue = textParts[0].includes("-");
   const issue = hasIssue ? textParts[0] : JIRA_ISSUE
 
-  const timeSpent = hasIssue ? textParts[1] : textParts[1];
+  const timeSpent = hasIssue ? textParts[1] : textParts[0];
   const contentText = textParts.slice(hasIssue ? 2 : 1).join(" ");
 
   if (user_id !== ALLOWED_USER) {
