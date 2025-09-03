@@ -63,11 +63,10 @@ app.post("/slack/log", async (req, res) => {
     return res.status(401).json({ text: "🚫 You are not allowed to use this command." });
   }
 
+  res.status(200).json();
+
   const result = await createWorklog(issue, contentText, timeSpent);
-  const success = result.status === 201;
   
   console.log(`Jira status: ${result.status}`);
-
-  return res.status(success ? 200 : result.status).json();
 });  
 app.listen(8080, () => console.log("Listening on port 8080"));
