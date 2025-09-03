@@ -6,7 +6,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@slack/bolt": "^4.4.0",
+    "express": "^5.1.0",
     "node-fetch": "^2.7.0"
   }
 }
